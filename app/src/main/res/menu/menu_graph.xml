@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mi_graph_Power"
+        android:title="Мощность"/>
+    <item
+        android:id="@+id/mi_graph_Energy"
+        android:title="Энергия"/>
+    <item
+        android:id="@+id/mi_graph_DurtyData"
+        android:title="Исходные данные"/>
+    <item
+        android:id="@+id/mi_graph_PrintScreen"
+        android:title="Сохранить"/>
+</menu>

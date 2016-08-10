@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Ormlite2</string>
+    <string name="start">Старт</string>
+    <string name="stop">Стоп</string>
+
+    <string name="graphLabelPower">График мощности [кВт]</string>
+    <string name="graphLabelEnergy">График электроэнергии [кВтч]</string>
+    <string name="graphLabelDurty">График громкости щелчков</string>
+
+    <string name="settingsFlashCountLabel">"Сколько раз моргает лампа за 1 кВтч"</string>
+    <string name="settingsFlashCountHint">"Сколько раз моргает лампа за 1 кВтч"</string>
+    <string name="settingsFlashCountDefaultValue">"3200"</string>
+
+    <string name="settingsTickCountLabel">"Сколько раз щелкает счетчик за 1 кВтч"</string>
+    <string name="settingsTickCountHint">"Сколко раз щекает механизм счетчика при 1 кВтч"</string>
+    <string name="settingsTickCountDefaultvalue">"200"</string>
+    <string name="settingsBtnSave">Сохранить</string>
+
+    <string name="noneData">Нет данных</string>
+
+
+
+    <string name="settingsSignalLevelLabel">Уровень громкости щелчка счетчика. Меньше этого значения считается шум</string>
+    <string name="settingsSignalLevelHint">3000</string>
+    <string name="settingsSignalLevelDefaultValue">3000</string>
+
+</resources>
