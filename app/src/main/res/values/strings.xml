@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ormlite2</string>
+    <string name="app_name">Ormlite</string>
     <string name="start">Старт</string>
     <string name="stop">Стоп</string>
 
