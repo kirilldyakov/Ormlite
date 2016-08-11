@@ -89,9 +89,11 @@ public class Main extends Activity {
 //    }
 //
     @Click(R.id.btnGraph)
-    void btnGraphClick() {
+    void btnGraphClick(){
         Graph_.intent(this).start();
     }
+
+//
 //
 //    @Click(R.id.btnNoice)
 //    void btnNoiceSignalClick() {

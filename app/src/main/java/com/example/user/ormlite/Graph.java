@@ -1,8 +1,12 @@
 package com.example.user.ormlite;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Color;
+
+import android.icu.util.Calendar;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,6 +20,9 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LabelFormatter;
+import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -29,8 +36,14 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.sql.SQLException;
+
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -52,7 +65,7 @@ public class Graph extends Activity {
     private final int GRAPH_DURTY = 1203;
 
     @InstanceState
-    int GraphState = 1203;
+    int GraphState = 1201;
 
 
     @ViewById(R.id.txtGraphLabel)
@@ -88,22 +101,24 @@ public class Graph extends Activity {
 
     @OptionsItem(R.id.mi_graph_Power)
     void showPowerGraph() {
+        data = null;
         GraphState = GRAPH_POWER;
         txtGraphLabel.setText(getText(R.string.graphLabelPower));
         if (calcPower())
-            draw(TYPE_LINE, Color.BLUE);
+            drawGraph(TYPE_LINE, Color.BLUE);
         else
             Toast.makeText(this, "Нет данных", Toast.LENGTH_SHORT).show();
     }
 
     @OptionsItem(R.id.mi_graph_Energy)
     void showEnergyGraph() {
+        data = null;
         GraphState = GRAPH_ENERGY;
 
         txtGraphLabel.setText(getText(R.string.graphLabelEnergy));
 
         if (calcEnergy())
-            draw(TYPE_LINE, Color.RED);
+            drawGraph(TYPE_LINE, Color.RED);
         else
             Toast.makeText(this, getText(R.string.noneData), Toast.LENGTH_SHORT).show();
 
@@ -111,86 +126,35 @@ public class Graph extends Activity {
 
     @OptionsItem(R.id.mi_graph_DurtyData)
     void showDurtyDataGraph() {
+        data = null;
         GraphState = GRAPH_DURTY;
-
         txtGraphLabel.setText(getText(R.string.graphLabelDurty));
-
         if (calcDurtyData()) {
 //            draw(R.color.DurtyLine);
-            draw(TYPE_BAR, Color.GREEN);
-            int filter = 0;
-            try {
-                filter = HelperFactory.getHelper().getSettingDAO().getValByName("FILTER");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            drawFilterLine(filter, Color.CYAN);
+            drawGraph(TYPE_BAR, Color.GREEN);
+            drawFilterLine(Color.CYAN);
         } else
             Toast.makeText(this, getText(R.string.noneData), Toast.LENGTH_SHORT).show();
     }
 
 
     //Расчет мощности потребления по имеющимся данным
-    public boolean calcPower() {
-//       long minDT = db.getMinDT();
+    public boolean calcEnergy() {
 
-//        int tickCount = db.getTickCount();
-//        double prev_x = 0;
-//        double prev_y = 0;
-//
-//        Cursor cursor = db.getReadableDatabase().rawQuery("Select " + DBH.KEY_DTL + ", " + DBH.KEY_AMPL
-//                + " from " + DBH.TABLE_NAME
-//                + " where " + DBH.KEY_AMPL + " >5000 "
-//                + " order by " + DBH.KEY_DTL + " asc;", null);
-//        if (!cursor.moveToFirst())
-//            return false;
-//
-//        List<DTlAmpl> curDTlAmpl = new ArrayList<DTlAmpl>();
-//
-//        long last_dtl = 0;
-//        int last_ampl = 0;
-//
-//        do {
-//            long dtl = cursor.getLong(cursor.getColumnIndex(DBH.KEY_DTL));
-//            int ampl = cursor.getInt(cursor.getColumnIndex(DBH.KEY_AMPL));
-//
-///*            if ((dtl-last_dtl)<1000){
-//                if (last_ampl<ampl){
-//                    curDTlAmpl.remove(curDTlAmpl.size()-1);
-//                }
-//                else
-//                    continue;
-//            }*/
-//
-//
-//            if ((dtl - last_dtl) < 1000) continue;
-//
-//            last_dtl = dtl;
-//            last_ampl = ampl;
-//            curDTlAmpl.add(new DTlAmpl(dtl, ampl));
-//        } while (cursor.moveToNext());
-//        cursor.close();
-//
-//        this.data = new DataPoint[curDTlAmpl.size() - 1];
-//        int j = 0;
-//        for (int i = 0; i < curDTlAmpl.size(); i++) {
-//            double dtl = curDTlAmpl.get(i).getDTl();
-//            double x = (dtl - minDT) / 1000; // секунды от начала
-//            double y = 0;
-//            if (x != 0) {
-//                y = 3600 / (tickCount * (x - prev_x));
-//                if (y > 100) y = prev_y;
-//                this.data[j] = new DataPoint(x, y);
-//                j++;
-//            }
-//            prev_x = x;
-//            prev_y = y;
-//        }
+        if (!calcPower()) return false;
+
+        for(int i =1; i<data.length;i++){
+            double x_0 = data[i].getX();
+            double y_0 = data[i].getY();
+            double y_m1 = data[i-1].getY();
+            data[i]=new DataPoint(x_0, y_0+y_m1);
+        }
+
         return true;
     }
 
     //Расчет количества потребленной ЭЭ за время измерений
-    public boolean calcEnergy() {
+    public boolean calcPower() {
         long minDT = HelperFactory.getHelper().getPickDAO().getMinDT();
 
 
@@ -217,39 +181,52 @@ public class Graph extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        if (picks.size()==0) return false;
 
-        ArrayList<Pick> tmpPicks = new ArrayList<Pick>() ;
+        ArrayList<Pick> tmpPicks = new ArrayList<>() ;
 
         int j =0;
         for(int i =0; i< picks.size();i++){
             Pick p = new Pick(picks.get(i).getDateTimeLong(),picks.get(i).getAmplitude());
             tmpPicks.add(p);
-            if (tmpPicks.size()>1){
-                Pick m2 =  tmpPicks.get(picks.size()-2);
-                Pick m1 =  tmpPicks.get(picks.size()-1);
+            int lastPickIdx = tmpPicks.size()-1;
+            if (lastPickIdx>0){
+                Pick pick_m1 = tmpPicks.get(lastPickIdx);
+                Pick pick_m2 = tmpPicks.get(lastPickIdx-1);
 
-                if (m1.getDateTimeLong()-m2.getDateTimeLong()<2000)
-                    tmpPicks.remove(tmpPicks.size()-1);
-
+                if (pick_m1.getDateTimeLong()-pick_m2.getDateTimeLong()<2000){
+                    if (pick_m1.getAmplitude()<pick_m2.getAmplitude())
+                        tmpPicks.remove(lastPickIdx);
+                    else
+                        tmpPicks.remove(lastPickIdx-1);
+                }
             }
         }
 
+
         long last_dtl=0;
-        this.data = new DataPoint[tmpPicks.size()];
-        for(int i=0; i<tmpPicks.size();i++){
-            double x = (tmpPicks.get(i).getDateTimeLong()-minDT)/1000;
+        this.data = new DataPoint[10/*tmpPicks.size()*/];
+        for(int i=0; i<10/*tmpPicks.size()*/;i++){
+            //double x = (tmpPicks.get(i).getDateTimeLong()-minDT)/(1000.0);
+            //double x = 1.0*tmpPicks.get(i).getDateTimeLong()/1000;
+            //long dt = tmpPicks.get(i).getDateTimeLong();
+            //double x = 1.0*i;//1.0*dt/(1000.0*60*60*24)+10957;
+            //Date x = new Date(tmpPicks.get(i).getDateTimeLong());
+            Date x = new Date(16,8,1+i);
+            //Date x =DateFormat.getInstance().format(tmpPicks.get(i).getDateTimeLong());
+
             double y = 0;
             if (i>0){
-                y= (tmpPicks.get(i).getDateTimeLong() - tmpPicks.get(i-1).getDateTimeLong())/1000;
+                double interval = 1.0*(tmpPicks.get(i).getDateTimeLong() - tmpPicks.get(i-1).getDateTimeLong())/1000;
+                y= 3600.0/(tickCount*interval);
             }
 
-            data[i] = new DataPoint(x,y);
+            data[i] = new DataPoint((Date)x,y);
         }
 
 
         return true;
     }
-
 
 
     public double periodInSeconds(long begDT, long endDT){
@@ -259,9 +236,6 @@ public class Graph extends Activity {
     public double power(int tickCount, double period){
         return 3600.0 / (tickCount * period);
     }
-
-
-
 
     //Подготова поступивших данных (пары [время: уровень сигнала])
     public boolean calcDurtyData() {
@@ -275,13 +249,15 @@ public class Graph extends Activity {
             e.printStackTrace();
         }
 
+        if (picks.size()==0) return false;
+
         int cnt = picks.size();
         this.data = new DataPoint[cnt];
 
         int i=0;
         for(Pick pick: picks){
             long dtl = pick.getDateTimeLong();
-            double x = (dtl - minDT) / (1000*60); // секунды от начала
+            double x = 1.0*(dtl - minDT) / (1000); // секунды от начала
             double y = pick.getAmplitude();
             this.data[i++] = new DataPoint(x, y);
         }
@@ -289,12 +265,24 @@ public class Graph extends Activity {
     }
 
     //Отрисовка данных на графике
-    boolean draw(int GraphType, int color) {
+    @TargetApi(Build.VERSION_CODES.N)
+    boolean drawGraph(int GraphType, int color) {
         try {
             graphView.getViewport().setScrollable(true);
             graphView.getViewport().setScalable(true);
             graphView.removeAllSeries();
 
+            graphView.getGridLabelRenderer().setLabelFormatter(
+                    new DateAsXAxisLabelFormatter(this,new SimpleDateFormat("ddMMyyhhmmss")));// hh:mm:ss
+
+           // graphView.getGridLabelRenderer().setLabelFormatter(
+           //         new DateAsXAxisLabelFormatter(getApplicationContext(),DateFormat.getTimeInstance()));
+            graphView.getGridLabelRenderer().setHorizontalAxisTitle("Date");
+            graphView.getGridLabelRenderer().setNumHorizontalLabels(3);
+
+
+            graphView.getGridLabelRenderer().setHorizontalLabelsVisible(true);
+            graphView.getGridLabelRenderer().setVerticalLabelsVisible(true);
 
             if (GraphType == TYPE_BAR) {
                 BarGraphSeries<DataPoint> series = new BarGraphSeries<>(this.data);
@@ -310,11 +298,11 @@ public class Graph extends Activity {
                 graphView.addSeries(series);
             }
 
-            graphView.getViewport().setYAxisBoundsManual(true);
-            graphView.getViewport().setMinY(0.0);
+            //graphView.getViewport().setYAxisBoundsManual(true);
+            //graphView.getViewport().setMinY(0.0);
 
-            int maxX = Math.min(50, data.length);
-            graphView.getViewport().setMaxX(Math.ceil(data[maxX-1].getX()));
+//            int maxX = Math.min(20, data.length);
+//            graphView.getViewport().setMaxX(Math.ceil(data[maxX-1].getX()));
         } catch (Exception e) {
             return false;
         }
@@ -322,7 +310,18 @@ public class Graph extends Activity {
         return true;
     }
 
-    boolean drawFilterLine(int value, int color) {
+    boolean drawFilterLine(int color) {
+        int filter = 0;
+        try {
+            filter = HelperFactory.getHelper().getSettingDAO().getValByName("FILTER");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+       return drawGraph(filter, color);
+    }
+
+        boolean drawFilterLine(int value, int color) {
+
         try {
             DataPoint[] filterData = new DataPoint[2];
             DataPoint BeginPoint = new DataPoint(0, value);
@@ -388,7 +387,7 @@ public class Graph extends Activity {
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://com.example.user.ormlite2/http/host/path")
+                Uri.parse("android-app://com.example.user.ormlite/http/host/path")
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
