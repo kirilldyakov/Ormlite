@@ -175,6 +175,13 @@ public class Graph extends Activity {
             e.printStackTrace();
         }
 
+        int minDuration = 0;
+        try {
+            tickCount = HelperFactory.getHelper().getSettingDAO().getValByName("MIN_DURATION");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         List<Pick> picks = null;
         try {
             picks =HelperFactory.getHelper().getPickDAO().getAllPicksWhereAmplitudeGE(filter);
@@ -194,7 +201,7 @@ public class Graph extends Activity {
                 Pick pick_m1 = tmpPicks.get(lastPickIdx);
                 Pick pick_m2 = tmpPicks.get(lastPickIdx-1);
 
-                if (pick_m1.getDateTimeLong()-pick_m2.getDateTimeLong()<2000){
+                if (pick_m1.getDateTimeLong()-pick_m2.getDateTimeLong()<minDuration){
                     if (pick_m1.getAmplitude()<pick_m2.getAmplitude())
                         tmpPicks.remove(lastPickIdx);
                     else

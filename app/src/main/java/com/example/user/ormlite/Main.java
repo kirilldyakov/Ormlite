@@ -59,6 +59,11 @@ public class Main extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        try {
+            HelperFactory.getHelper().getSettingDAO().create(new Setting("MIN_DURATION", 2000));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         List<Pick> picks = null;
         try {
