@@ -158,8 +158,8 @@ public class Graph extends Activity {
         long minDT = HelperFactory.getHelper().getPickDAO().getMinDT();
 
 
-        double prev_y = 0;
-        double prev_x = 0;
+        //double prev_y = 0;
+        //double prev_x = 0;
 
         int filter = 0;
         try {
@@ -211,8 +211,8 @@ public class Graph extends Activity {
             //double x = 1.0*tmpPicks.get(i).getDateTimeLong()/1000;
             //long dt = tmpPicks.get(i).getDateTimeLong();
             //double x = 1.0*i;//1.0*dt/(1000.0*60*60*24)+10957;
-            //Date x = new Date(tmpPicks.get(i).getDateTimeLong());
-            Date x = new Date(16,8,1+i);
+            Date x = new Date((long)tmpPicks.get(i).getDateTimeLong());
+            //Date x = new Date(16,8,1+i);
             //Date x =DateFormat.getInstance().format(tmpPicks.get(i).getDateTimeLong());
 
             double y = 0;
