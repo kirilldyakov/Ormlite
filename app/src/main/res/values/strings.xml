@@ -23,5 +23,7 @@
     <string name="settingsSignalLevelLabel">Уровень громкости щелчка счетчика. Меньше этого значения считается шум</string>
     <string name="settingsSignalLevelHint">3000</string>
     <string name="settingsSignalLevelDefaultValue">3000</string>
+    <string name="AxisXFormat">mm:ss</string>
+    <string name="AxisXFormat1">hh:mm:ss</string>
 
 </resources>

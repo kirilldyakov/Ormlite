@@ -26,11 +26,11 @@ import java.util.List;
 public class Main extends Activity {
 
     @ViewById(R.id.textMain)
-    TextView txtHW;
+    TextView txtMain;
 //
     @AfterViews
     protected void init() {
-        txtHW.setText("newText");
+        txtMain.setText("newText");
 
 
         try {
@@ -71,8 +71,10 @@ public class Main extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        if (picks!=null){
         for (Pick pick:picks) {
             Log.d("LOG_TAG", pick.toString());
+        }
         }
 
         List<Setting> settings = null;
@@ -82,9 +84,10 @@ public class Main extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        if (settings!=null){
         for (Setting setting:settings) {
             Log.d("LOG_TAG", setting.toString());
-        }
+        }}
 
     }
 //

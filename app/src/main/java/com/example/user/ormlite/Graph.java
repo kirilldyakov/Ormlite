@@ -3,13 +3,9 @@ package com.example.user.ormlite;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Color;
-
-import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,13 +16,10 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.LabelFormatter;
-import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.Series;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
@@ -36,24 +29,17 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import java.sql.SQLException;
-
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 
 @EActivity(R.layout.activity_graph)
 @OptionsMenu(R.menu.menu_graph)
 public class Graph extends Activity {
     private GraphView graphView;
-    private LinearLayout graphLayout;
 
     private DataPoint[] data = null;
 
@@ -80,7 +66,7 @@ public class Graph extends Activity {
     @AfterViews
     void init() {
         graphView = new GraphView(this);
-        graphLayout = (LinearLayout) findViewById(R.id.GraphLayout);
+        LinearLayout graphLayout = (LinearLayout) findViewById(R.id.GraphLayout);
         graphLayout.addView(graphView);
 
         switch (GraphState) {
@@ -101,7 +87,7 @@ public class Graph extends Activity {
 
     @OptionsItem(R.id.mi_graph_Power)
     void showPowerGraph() {
-        data = null;
+        //DataPoint[] data = new DataPoint[0];
         GraphState = GRAPH_POWER;
         txtGraphLabel.setText(getText(R.string.graphLabelPower));
         if (calcPower())
@@ -155,12 +141,11 @@ public class Graph extends Activity {
 
     //Расчет количества потребленной ЭЭ за время измерений
     public boolean calcPower() {
-        long minDT = HelperFactory.getHelper().getPickDAO().getMinDT();
-
-
-        //double prev_y = 0;
-        //double prev_x = 0;
-
+/*        try {
+            long minDT = HelperFactory.getHelper().getPickDAO().getMinDT();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }*/
         int filter = 0;
         try {
             filter = HelperFactory.getHelper().getSettingDAO().getValByName("FILTER");
@@ -177,7 +162,7 @@ public class Graph extends Activity {
 
         int minDuration = 0;
         try {
-            tickCount = HelperFactory.getHelper().getSettingDAO().getValByName("MIN_DURATION");
+            minDuration = HelperFactory.getHelper().getSettingDAO().getValByName("MIN_DURATION");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -192,7 +177,40 @@ public class Graph extends Activity {
 
         ArrayList<Pick> tmpPicks = new ArrayList<>() ;
 
-        int j =0;
+        compressPicks(minDuration, picks, tmpPicks);
+
+
+        this.data = new DataPoint[tmpPicks.size()];
+        Calendar calendar = java.util.Calendar.getInstance();
+        for(int i=0; i<tmpPicks.size();i++){
+            //double x = (tmpPicks.get(i).getDateTimeLong()-minDT)/(1000.0);
+            //double x = 1.0*tmpPicks.get(i).getDateTimeLong()/1000;
+            //long dt = tmpPicks.get(i).getDateTimeLong();
+            //Date x = new Date((long)i*1000*60*60*24);//1.0*dt/(1000.0*60*60*24)+10957;
+
+
+            calendar.setTimeInMillis(tmpPicks.get(i).getDateTimeLong());
+
+            Date x = calendar.getTime();
+            //Date x =DateFormat.getInstance().format(tmpPicks.get(i).getDateTimeLong());
+            //double x = 1.0*i*1000;
+            double y = 0;
+            if (i>0){
+                double interval = 1.0*(tmpPicks.get(i).getDateTimeLong() - tmpPicks.get(i-1).getDateTimeLong())/1000;
+                y= 3600.0/(tickCount*interval);
+            }
+
+            //data[i] = new DataPoint(x,y);
+            calendar.add(Calendar.MINUTE, i);
+
+            data[i] = new DataPoint(calendar.getTime(),y);
+        }
+
+
+        return true;
+    }
+
+    private void compressPicks(int minDuration, List<Pick> picks, ArrayList<Pick> tmpPicks) {
         for(int i =0; i< picks.size();i++){
             Pick p = new Pick(picks.get(i).getDateTimeLong(),picks.get(i).getAmplitude());
             tmpPicks.add(p);
@@ -201,7 +219,7 @@ public class Graph extends Activity {
                 Pick pick_m1 = tmpPicks.get(lastPickIdx);
                 Pick pick_m2 = tmpPicks.get(lastPickIdx-1);
 
-                if (pick_m1.getDateTimeLong()-pick_m2.getDateTimeLong()<minDuration){
+                if (pick_m1.getDateTimeLong()-pick_m2.getDateTimeLong()<minDuration*1.0){
                     if (pick_m1.getAmplitude()<pick_m2.getAmplitude())
                         tmpPicks.remove(lastPickIdx);
                     else
@@ -209,36 +227,10 @@ public class Graph extends Activity {
                 }
             }
         }
-
-
-        long last_dtl=0;
-        this.data = new DataPoint[10/*tmpPicks.size()*/];
-        for(int i=0; i<10/*tmpPicks.size()*/;i++){
-            //double x = (tmpPicks.get(i).getDateTimeLong()-minDT)/(1000.0);
-            //double x = 1.0*tmpPicks.get(i).getDateTimeLong()/1000;
-            //long dt = tmpPicks.get(i).getDateTimeLong();
-            //double x = 1.0*i;//1.0*dt/(1000.0*60*60*24)+10957;
-            Date x = new Date((long)tmpPicks.get(i).getDateTimeLong());
-            //Date x = new Date(16,8,1+i);
-            //Date x =DateFormat.getInstance().format(tmpPicks.get(i).getDateTimeLong());
-
-            double y = 0;
-            if (i>0){
-                double interval = 1.0*(tmpPicks.get(i).getDateTimeLong() - tmpPicks.get(i-1).getDateTimeLong())/1000;
-                y= 3600.0/(tickCount*interval);
-            }
-
-            data[i] = new DataPoint((Date)x,y);
-        }
-
-
-        return true;
     }
 
 
-    public double periodInSeconds(long begDT, long endDT){
-        return Math.max(0.0,(endDT-begDT)/1000);
-    }
+
 
     public double power(int tickCount, double period){
         return 3600.0 / (tickCount * period);
@@ -246,7 +238,12 @@ public class Graph extends Activity {
 
     //Подготова поступивших данных (пары [время: уровень сигнала])
     public boolean calcDurtyData() {
-        long minDT = HelperFactory.getHelper().getPickDAO().getMinDT();
+        long minDT = 0;
+        try {
+            minDT = HelperFactory.getHelper().getPickDAO().getMinDT();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         List<Pick> picks = null;
 
@@ -274,22 +271,27 @@ public class Graph extends Activity {
     //Отрисовка данных на графике
     @TargetApi(Build.VERSION_CODES.N)
     boolean drawGraph(int GraphType, int color) {
-        try {
-            graphView.getViewport().setScrollable(true);
-            graphView.getViewport().setScalable(true);
+
+
+
+
+
+
+
+
+
             graphView.removeAllSeries();
 
-            graphView.getGridLabelRenderer().setLabelFormatter(
-                    new DateAsXAxisLabelFormatter(this,new SimpleDateFormat("ddMMyyhhmmss")));// hh:mm:ss
 
-           // graphView.getGridLabelRenderer().setLabelFormatter(
-           //         new DateAsXAxisLabelFormatter(getApplicationContext(),DateFormat.getTimeInstance()));
+
             graphView.getGridLabelRenderer().setHorizontalAxisTitle("Date");
-            graphView.getGridLabelRenderer().setNumHorizontalLabels(3);
+            graphView.getGridLabelRenderer().setNumHorizontalLabels(2);
 
 
-            graphView.getGridLabelRenderer().setHorizontalLabelsVisible(true);
-            graphView.getGridLabelRenderer().setVerticalLabelsVisible(true);
+            //graphView.getGridLabelRenderer().setHorizontalLabelsVisible(true);
+            //graphView.getGridLabelRenderer().setVerticalLabelsVisible(true);
+            //graphView.getGridLabelRenderer().setHumanRounding(false);
+
 
             if (GraphType == TYPE_BAR) {
                 BarGraphSeries<DataPoint> series = new BarGraphSeries<>(this.data);
@@ -305,14 +307,23 @@ public class Graph extends Activity {
                 graphView.addSeries(series);
             }
 
-            //graphView.getViewport().setYAxisBoundsManual(true);
-            //graphView.getViewport().setMinY(0.0);
+// set date label formatter
 
-//            int maxX = Math.min(20, data.length);
-//            graphView.getViewport().setMaxX(Math.ceil(data[maxX-1].getX()));
-        } catch (Exception e) {
-            return false;
-        }
+        graphView.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
+
+        graphView.getViewport().setScrollable(true);
+        graphView.getViewport().setScalable(true);
+        graphView.getGridLabelRenderer().setLabelFormatter(
+                new DateAsXAxisLabelFormatter(this,new SimpleDateFormat(getString(R.string.AxisXFormat))));// hh:mm:ss
+
+// set manual x bounds to have nice steps
+       // graphView.getViewport().setMinX(d1.getTime());
+      //  graphView.getViewport().setMaxX(d3.getTime());
+       // graphView.getViewport().setXAxisBoundsManual(true);
+
+// as we use dates as labels, the human rounding to nice readable numbers
+// is not nessecary
+        graphView.getGridLabelRenderer().setHumanRounding(false);
 
         return true;
     }
@@ -324,10 +335,10 @@ public class Graph extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-       return drawGraph(filter, color);
+       return drawFilterLine(filter, color);
     }
 
-        boolean drawFilterLine(int value, int color) {
+    boolean drawFilterLine(int value, int color) {
 
         try {
             DataPoint[] filterData = new DataPoint[2];
