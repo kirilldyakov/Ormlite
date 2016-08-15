@@ -16,4 +16,6 @@ public class MyApplication extends Application {
         HelperFactory.releaseHelper();
         super.onTerminate();
     }
+
+
 }

@@ -20,7 +20,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_NAME ="Counter.db";
 
     //с каждым увеличением версии, при нахождении в устройстве БД с предыдущей версией будет выполнен метод onUpgrade();
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     //ссылки на DAO соответсвующие сущностям, хранимым в БД
     private PickDAO pickDao = null;
@@ -60,7 +60,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     //синглтон для PickDAO
-     public PickDAO getPickDAO() throws SQLException{
+     public PickDAO getPickDAO() {
          if(pickDao == null){
              try {
                  pickDao = new PickDAO(getConnectionSource(), Pick.class);
@@ -72,7 +72,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
       }
 
     //синглтон для PickDAO
-    public SettingDAO getSettingDAO() throws SQLException{
+    public SettingDAO getSettingDAO() {
         if(settingDao == null){
             try {
                 settingDao = new SettingDAO(getConnectionSource(), Setting.class);
