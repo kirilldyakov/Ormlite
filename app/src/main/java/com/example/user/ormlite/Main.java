@@ -9,9 +9,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.example.user.ormlite.Database.HelperFactory;
-import com.example.user.ormlite.Database.Pick;
-import com.example.user.ormlite.Database.Setting;
+import com.example.user.ormlite.database.HelperFactory;
+import com.example.user.ormlite.database.Pick;
+import com.example.user.ormlite.database.Setting;
+import com.example.user.ormlite.graph.Graph_Power_;
 
 
 import org.androidannotations.annotations.AfterViews;
@@ -98,7 +99,7 @@ public class Main extends Activity {
 //
     @Click(R.id.btnGraph)
     void btnGraphClick(){
-        Graph_.intent(this).start();
+        Graph_Power_.intent(this).start();
     }
 
 //

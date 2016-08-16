@@ -2,7 +2,7 @@ package com.example.user.ormlite;
 
 import android.app.Application;
 
-import com.example.user.ormlite.Database.HelperFactory;
+import com.example.user.ormlite.database.HelperFactory;
 
 public class MyApplication extends Application {
 

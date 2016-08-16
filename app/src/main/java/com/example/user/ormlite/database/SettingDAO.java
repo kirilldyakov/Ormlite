@@ -1,7 +1,6 @@
-package com.example.user.ormlite.Database;
+package com.example.user.ormlite.database;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 

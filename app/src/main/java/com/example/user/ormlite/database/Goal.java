@@ -1,4 +1,4 @@
-package com.example.user.ormlite.Database;
+package com.example.user.ormlite.database;
 
 
 import com.j256.ormlite.field.DataType;
