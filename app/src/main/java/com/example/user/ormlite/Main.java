@@ -102,6 +102,11 @@ public class Main extends Activity {
         Graph_Power_.intent(this).start();
     }
 
+
+    @Click(R.id.btnSettings)
+    void btnSettingsClick(){
+        actSettings_.intent(this).start();
+    }
 //
 //
 //    @Click(R.id.btnNoice)

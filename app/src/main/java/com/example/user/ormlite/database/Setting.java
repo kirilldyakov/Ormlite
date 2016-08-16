@@ -35,7 +35,13 @@ public class Setting {
                 '}';
     }
 
+
     public int getVal() {
         return Val;
     }
+
+    public String getName() {
+        return Name;
+    }
 }
+

@@ -21,6 +21,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textMain"
         android:layout_centerHorizontal="true" />
+    <Button
+        android:id="@+id/btnSettings"
+        android:text="Настройки"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnGraph"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

@@ -19,18 +19,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".Main_" />
-        <activity android:name=".Graph_" />
         <activity android:name=".graph.Graph_Durty_" />
         <activity android:name=".graph.Graph_Power_" />
         <activity android:name=".graph.Graph_Energy_" />
-
-        <!--
-     ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
-        -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+        <activity android:name=".actSettings_" />
 
     </application>
 

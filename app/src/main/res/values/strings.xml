@@ -36,6 +36,7 @@
 
     <string name="Graph_Durty_HorizontalAxisTitle">Щелчок??</string>
     <string name="Graph_Durty_VerticalAxisTitle">Сигнал</string>
+    <string name="title_activity_settings">Настройки</string>
 
 
 </resources>
