@@ -23,6 +23,8 @@
         <activity android:name=".graph.Graph_Power_" />
         <activity android:name=".graph.Graph_Energy_" />
         <activity android:name=".actSettings_" />
+        <activity android:name=".properties.PropertiesList_" />
+        <activity android:name=".properties.PropFilter_" />
 
     </application>
 

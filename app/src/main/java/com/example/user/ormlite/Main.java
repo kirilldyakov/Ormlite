@@ -13,6 +13,8 @@ import com.example.user.ormlite.database.HelperFactory;
 import com.example.user.ormlite.database.Pick;
 import com.example.user.ormlite.database.Setting;
 import com.example.user.ormlite.graph.Graph_Power_;
+import com.example.user.ormlite.properties.PropertiesList;
+import com.example.user.ormlite.properties.PropertiesList_;
 
 
 import org.androidannotations.annotations.AfterViews;
@@ -105,7 +107,7 @@ public class Main extends Activity {
 
     @Click(R.id.btnSettings)
     void btnSettingsClick(){
-        actSettings_.intent(this).start();
+       PropertiesList_.intent(this).start();
     }
 //
 //

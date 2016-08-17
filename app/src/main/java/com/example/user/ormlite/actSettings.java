@@ -59,8 +59,8 @@ public class actSettings extends AppCompatActivity {
             catNames[i++] = setting.getName();
         }
 // используем адаптер данных
-        //ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-        //        android.R.layout.simple_list_item_2, catNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, catNames);
 
 
 
