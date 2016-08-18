@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+//TODO Снова время не правильно отображается с 3:00:00
 
 @EActivity(R.layout.activity_graph)
 @OptionsMenu(R.menu.menu_graph)
@@ -160,8 +161,8 @@ public class Graph_Power extends Activity {
     boolean drawLineGraph(int color) {
         graphView.removeAllSeries();
         graphView.getGridLabelRenderer().setNumHorizontalLabels(3);
-        graphView.getGridLabelRenderer().setHorizontalAxisTitle(getString(R.string.Graph_Power_HorizontalAxisTitle));
-        graphView.getGridLabelRenderer().setVerticalAxisTitle(getString(R.string.Graph_Power_VerticalAxisTitle));
+        //graphView.getGridLabelRenderer().setHorizontalAxisTitle(getString(R.string.Graph_Power_HorizontalAxisTitle));
+        //graphView.getGridLabelRenderer().setVerticalAxisTitle(getString(R.string.Graph_Power_VerticalAxisTitle));
 
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(this.data);
         series.setDrawDataPoints(true);

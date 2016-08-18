@@ -1,6 +1,7 @@
 package com.example.user.ormlite.database;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -53,5 +54,17 @@ public class SettingDAO extends BaseDaoImpl<Setting, Integer> {
     public int count(){
         return this.count();
     }
+
+    public int deleteAll(){
+        int res = 0;
+        DeleteBuilder<Setting, Integer> db = this.deleteBuilder();
+        try {
+            res= db.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
 
 }

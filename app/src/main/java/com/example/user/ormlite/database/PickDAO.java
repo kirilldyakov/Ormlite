@@ -1,6 +1,7 @@
 package com.example.user.ormlite.database;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -59,5 +60,16 @@ public class PickDAO extends BaseDaoImpl<Pick, Integer> {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public int deleteAll(){
+        int res = 0;
+        DeleteBuilder<Pick, Integer> db = this.deleteBuilder();
+        try {
+            res= db.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }

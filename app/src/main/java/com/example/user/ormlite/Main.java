@@ -1,7 +1,6 @@
 package com.example.user.ormlite;
 
 
-
 import android.app.Activity;
 
 import android.util.Log;
@@ -13,6 +12,7 @@ import com.example.user.ormlite.database.HelperFactory;
 import com.example.user.ormlite.database.Pick;
 import com.example.user.ormlite.database.Setting;
 import com.example.user.ormlite.graph.Graph_Power_;
+import com.example.user.ormlite.measures.Noice_;
 import com.example.user.ormlite.properties.PropertiesList;
 import com.example.user.ormlite.properties.PropertiesList_;
 
@@ -30,24 +30,16 @@ public class Main extends Activity {
 
     @ViewById(R.id.textMain)
     TextView txtMain;
-//
+
+    //
     @AfterViews
     protected void init() {
         txtMain.setText("newText");
 
+        HelperFactory.getHelper().getSettingDAO().deleteAll();
 
         try {
-            HelperFactory.getHelper().getPickDAO().create(new Pick(353));
-            HelperFactory.getHelper().getPickDAO().create(new Pick(459));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
-
-
-            HelperFactory.getHelper().getSettingDAO().create(new Setting("FILTER", 300));
+            HelperFactory.getHelper().getSettingDAO().create(new Setting("FILTER", 4000));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -74,10 +66,10 @@ public class Main extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (picks!=null){
-        for (Pick pick:picks) {
-            Log.d("LOG_TAG", pick.toString());
-        }
+        if (picks != null) {
+            for (Pick pick : picks) {
+                Log.d("LOG_TAG", pick.toString());
+            }
         }
 
         List<Setting> settings = null;
@@ -87,44 +79,51 @@ public class Main extends Activity {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (settings!=null){
-        for (Setting setting:settings) {
-            Log.d("LOG_TAG", setting.toString());
-        }}
+        if (settings != null) {
+            for (Setting setting : settings) {
+                Log.d("LOG_TAG", setting.toString());
+            }
+        }
 
     }
-//
+
+    //
 //    @Click(R.id.btnSettings)
 //    void btnSettingsClick() {
 //        Settings_.intent(this).start();
 //    }
 //
     @Click(R.id.btnGraph)
-    void btnGraphClick(){
+    void btnGraphClick() {
         Graph_Power_.intent(this).start();
     }
 
 
     @Click(R.id.btnSettings)
-    void btnSettingsClick(){
-       PropertiesList_.intent(this).start();
+    void btnPropertiesListClick() {
+        PropertiesList_.intent(this).start();
     }
+
+    //
 //
-//
-//    @Click(R.id.btnNoice)
-//    void btnNoiceSignalClick() {
-//        Noice_.intent(this).start();
-//    }
+    @Click(R.id.btnNoice)
+    void btnNoiceSignalClick() {
+        Noice_.intent(this).start();
+    }
+
+    @Click(R.id.btnDel)
+    void btnDelClick() {
+        Log.d("LOG_TAG", "Удалено:" + HelperFactory.getHelper().getPickDAO().deleteAll());
+    }
 //
 //    @Click(R.id.btnLamp)
 //    void btnLampClick() {
 //        Lamp_.intent(this).start();
 
 
-
     @Override
     public void onBackPressed() {
-        Toast toast = Toast.makeText(this,"Не рычи", Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(this, "Не рычи", Toast.LENGTH_SHORT);
         toast.show();
     }
 }

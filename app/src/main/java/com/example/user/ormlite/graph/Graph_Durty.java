@@ -121,8 +121,10 @@ public class Graph_Durty extends Activity {
         graphView.getGridLabelRenderer().setHorizontalLabelsVisible(true);
         graphView.getGridLabelRenderer().setVerticalLabelsVisible(true);
         graphView.getGridLabelRenderer().setHumanRounding(true);
-        graphView.getGridLabelRenderer().setHorizontalAxisTitle(getString(R.string.Graph_Durty_HorizontalAxisTitle));
-        graphView.getGridLabelRenderer().setVerticalAxisTitle(getString(R.string.Graph_Durty_VerticalAxisTitle));
+
+
+        //graphView.getGridLabelRenderer().setHorizontalAxisTitle(getString(R.string.Graph_Durty_HorizontalAxisTitle));
+        //graphView.getGridLabelRenderer().setVerticalAxisTitle(getString(R.string.Graph_Durty_VerticalAxisTitle));
 
 
         //graphView.getGridLabelRenderer().setNumHorizontalLabels(3);
@@ -135,7 +137,7 @@ public class Graph_Durty extends Activity {
         graphView.addSeries(series);
         graphView.getViewport().setYAxisBoundsManual(true);
         graphView.getViewport().setMinY(0.0);
-        graphView.getViewport().setMaxY(1000.0);
+        graphView.getViewport().setMaxY(25000.0);
 
         series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
             @Override

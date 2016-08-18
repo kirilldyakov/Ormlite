@@ -28,6 +28,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnGraph"
         android:layout_centerHorizontal="true" />
+    <Button
+        android:id="@+id/btnNoice"
+        android:text="Звук"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnSettings"
+        android:layout_centerHorizontal="true" />
 
-
+    <Button
+        android:id="@+id/btnDel"
+        android:text="Удалить"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnNoice"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

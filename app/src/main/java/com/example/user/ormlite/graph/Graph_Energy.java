@@ -174,8 +174,10 @@ public class Graph_Energy extends Activity {
     boolean drawLineGraph(int color) {
         graphView.removeAllSeries();
         graphView.getGridLabelRenderer().setNumHorizontalLabels(3);
-        graphView.getGridLabelRenderer().setHorizontalAxisTitle(getString(R.string.Graph_Energy_HorizontalAxisTitle));
-        graphView.getGridLabelRenderer().setVerticalAxisTitle(getString(R.string.Graph_Energy_VerticalAxisTitle));
+
+
+        //graphView.getGridLabelRenderer().setHorizontalAxisTitle(getString(R.string.Graph_Energy_HorizontalAxisTitle));
+        //graphView.getGridLabelRenderer().setVerticalAxisTitle(getString(R.string.Graph_Energy_VerticalAxisTitle));
 
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(this.data);
         series.setDrawDataPoints(true);
